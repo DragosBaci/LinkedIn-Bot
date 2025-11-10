@@ -39,28 +39,6 @@ export class BotService {
     return result.data!;
   }
 
-  static async getStatus(): Promise<BotState> {
-    const response = await fetch(`${API_BASE_URL}/bot/status`);
-    const result = await response.json() as ApiResponse<BotState>;
-
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to get status');
-    }
-
-    return result.data!;
-  }
-
-  static async getLogs(): Promise<LogEntry[]> {
-    const response = await fetch(`${API_BASE_URL}/logs`);
-    const result = await response.json() as ApiResponse<LogEntry[]>;
-
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to get logs');
-    }
-
-    return result.data!;
-  }
-
   static async clearLogs(): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/logs/clear`, {
       method: 'POST'

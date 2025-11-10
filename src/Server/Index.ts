@@ -1,10 +1,13 @@
 import express from 'express';
 import cors from 'cors';
+import { WebSocketServer } from 'ws';
+import { createServer } from 'http';
 import { BotController } from '@/Server/Controllers/BotController';
 import { LoggerService } from '@/Server/Services/LoggerService';
 
 const app = express();
 const PORT = 3001;
+const WS_PORT = 3002;
 
 app.use(cors());
 app.use(express.json());
@@ -23,22 +26,25 @@ app.post('/api/bot/stop', async (req, res) => {
   res.json(result);
 });
 
-app.get('/api/bot/status', (req, res) => {
-  const status = botController.getStatus();
-  res.json({ success: true, data: status });
-});
-
-app.get('/api/logs', (req, res) => {
-  const logs = logger.getLogs();
-  res.json({ success: true, data: logs });
-});
-
 app.post('/api/logs/clear', (req, res) => {
   logger.clearLogs();
   res.json({ success: true });
 });
 
+// Start HTTP server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  logger.log('info', `Server started on port ${PORT}`);
+});
+
+// Start WebSocket server
+const server = createServer();
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws) => {
+  console.log('WebSocket client connected');
+  logger.addWebSocketClient(ws);
+});
+
+server.listen(WS_PORT, () => {
+  console.log(`🔌 WebSocket server running on ws://localhost:${WS_PORT}`);
 });

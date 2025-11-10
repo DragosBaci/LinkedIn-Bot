@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { LogEntry } from '@/Common/Types/LogEntry';
 
 interface LogListProps {
@@ -7,6 +7,8 @@ interface LogListProps {
 }
 
 export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   const getLogIcon = (level: LogEntry['level']): string => {
     switch (level) {
       case 'info':
@@ -36,26 +38,42 @@ export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
     });
   };
 
+  // Filter logs based on advanced mode
+  const filteredLogs = showAdvanced 
+    ? logs 
+    : logs.filter(log => !log.isAdvanced);
+
   return (
     <div className="log-list">
       <div className="log-header">
         <h2>Activity Log</h2>
-        <button className="btn-clear" onClick={onClear}>
-          🗑️ Clear
-        </button>
+        <div className="log-header-actions">
+          <button 
+            className={`btn-toggle ${showAdvanced ? 'active' : ''}`}
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            title={showAdvanced ? 'Hide technical details' : 'Show technical details'}
+          >
+            {showAdvanced ? '🔧 Advanced' : '👤 Simple'}
+          </button>
+          <button className="btn-clear" onClick={onClear}>
+            🗑️ Clear
+          </button>
+        </div>
       </div>
       <div className="log-content">
-        {logs.length === 0 ? (
+        {filteredLogs.length === 0 ? (
           <div className="log-empty">
             <p>No logs yet. Start the bot to see activity.</p>
           </div>
         ) : (
           <div className="log-entries">
-            {logs.map((log) => (
+            {filteredLogs.map((log) => (
               <div key={log.id} className={getLogClass(log.level)}>
                 <span className="log-icon">{getLogIcon(log.level)}</span>
                 <span className="log-time">{formatTime(log.timestamp)}</span>
-                <span className="log-message">{log.message}</span>
+                <span className="log-message">
+                  {log.userMessage || log.message}
+                </span>
               </div>
             ))}
           </div>
@@ -64,4 +82,3 @@ export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
     </div>
   );
 };
-

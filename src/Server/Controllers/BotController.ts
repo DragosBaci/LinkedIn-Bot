@@ -38,9 +38,5 @@ export class BotController {
       };
     }
   }
-
-  getStatus(): BotState {
-    return this.bot.getState();
-  }
 }
 

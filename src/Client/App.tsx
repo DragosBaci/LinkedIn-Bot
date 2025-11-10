@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BotControl } from '@/Client/Components/BotControl';
 import { LogList } from '@/Client/Components/LogList';
 import { BotService } from '@/Client/Services/BotService';
+import { WebSocketService } from '@/Client/Services/WebSocketService';
 import type { BotState } from '@/Common/Types/BotStatus';
 import type { LogEntry } from '@/Common/Types/LogEntry';
 import { BotStatus } from '@/Common/Types/BotStatus';
+
+const WS_URL = 'ws://localhost:3002';
 
 export const App: React.FC = () => {
   const [botState, setBotState] = useState<BotState>({
@@ -14,23 +17,32 @@ export const App: React.FC = () => {
   });
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const wsServiceRef = useRef<WebSocketService | null>(null);
 
   useEffect(() => {
-    // Poll for status and logs updates
-    const interval = setInterval(async () => {
-      try {
-        const [status, fetchedLogs] = await Promise.all([
-          BotService.getStatus(),
-          BotService.getLogs()
-        ]);
-        setBotState(status);
-        setLogs(fetchedLogs);
-      } catch (error) {
-        console.error('Failed to fetch updates:', error);
-      }
-    }, 1000);
+    // Initialize WebSocket service
+    const wsService = new WebSocketService();
+    wsServiceRef.current = wsService;
 
-    return () => clearInterval(interval);
+    // Set up WebSocket handlers
+    wsService.onInitLogs((initialLogs) => {
+      setLogs(initialLogs);
+    });
+
+    wsService.onNewLog((newLog) => {
+      setLogs((prevLogs) => [...prevLogs, newLog]);
+    });
+
+    wsService.onLogsClear(() => {
+      setLogs([]);
+    });
+
+    // Connect to WebSocket
+    wsService.connect(WS_URL);
+
+    return () => {
+      wsService.disconnect();
+    };
   }, []);
 
   const handleStart = async () => {
@@ -62,7 +74,7 @@ export const App: React.FC = () => {
   const handleClearLogs = async () => {
     try {
       await BotService.clearLogs();
-      setLogs([]);
+      // Logs will be cleared via WebSocket notification
     } catch (error) {
       console.error('Failed to clear logs:', error);
       alert('Failed to clear logs. Check console for details.');
