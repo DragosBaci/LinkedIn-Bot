@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import { BotStatus } from '../common/types/bot-status';
 
 interface BotState {
-  status: 'idle' | 'launching' | 'navigating' | 'success' | 'error' | 'closing';
+  status: BotStatus;
   message: string;
   timestamp: string;
   pageTitle?: string;
@@ -15,7 +16,7 @@ interface LogEntry extends BotState {
 
 function App() {
   const [botState, setBotState] = useState<BotState>({
-    status: 'idle',
+    status: BotStatus.IDLE,
     message: 'Connecting to server...',
     timestamp: new Date().toISOString()
   });
@@ -74,24 +75,24 @@ function App() {
 
   const getStatusColor = (status: BotState['status']) => {
     switch (status) {
-      case 'idle': return '#6c757d';
-      case 'launching': return '#ffc107';
-      case 'navigating': return '#17a2b8';
-      case 'success': return '#28a745';
-      case 'error': return '#dc3545';
-      case 'closing': return '#6c757d';
+      case BotStatus.IDLE: return '#6c757d';
+      case BotStatus.LAUNCHING: return '#ffc107';
+      case BotStatus.NAVIGATING: return '#17a2b8';
+      case BotStatus.SUCCESS: return '#28a745';
+      case BotStatus.ERROR: return '#dc3545';
+      case BotStatus.CLOSING: return '#6c757d';
       default: return '#6c757d';
     }
   };
 
   const getStatusIcon = (status: BotState['status']) => {
     switch (status) {
-      case 'idle': return '⚪';
-      case 'launching': return '🚀';
-      case 'navigating': return '🔄';
-      case 'success': return '✅';
-      case 'error': return '❌';
-      case 'closing': return '🔒';
+      case BotStatus.IDLE: return '⚪';
+      case BotStatus.LAUNCHING: return '🚀';
+      case BotStatus.NAVIGATING: return '🔄';
+      case BotStatus.SUCCESS: return '✅';
+      case BotStatus.ERROR: return '❌';
+      case BotStatus.CLOSING: return '🔒';
       default: return '⚪';
     }
   };
@@ -114,7 +115,7 @@ function App() {
               <h2>Current Status</h2>
               <button 
                 onClick={startBot} 
-                disabled={!isConnected || botState.status !== 'idle'}
+                disabled={!isConnected || botState.status !== BotStatus.IDLE}
                 className="start-button"
               >
                 Start Bot

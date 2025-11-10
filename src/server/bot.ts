@@ -1,7 +1,10 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
+import { BotStatus } from '../common/types/bot-status';
+import { BotMessages } from '../common/constants/bot-messages';
+import { createBotState } from '../common/utils/bot-helpers';
 
 export interface BotState {
-  status: 'idle' | 'launching' | 'navigating' | 'success' | 'error' | 'closing';
+  status: BotStatus;
   message: string;
   timestamp: string;
   pageTitle?: string;
@@ -14,11 +17,7 @@ let isRunning = false;
 
 export async function runLinkedInBot(onStateChange: StateCallback): Promise<void> {
   if (isRunning) {
-    onStateChange({
-      status: 'error',
-      message: 'Bot is already running',
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.ERROR, BotMessages.ALREADY_RUNNING));
     return;
   }
 
@@ -26,11 +25,7 @@ export async function runLinkedInBot(onStateChange: StateCallback): Promise<void
   let browser: Browser | null = null;
 
   try {
-    onStateChange({
-      status: 'launching',
-      message: 'Launching browser...',
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.LAUNCHING, BotMessages.LAUNCHING_BROWSER));
 
     // Launch browser with visible window
     browser = await puppeteer.launch({
@@ -44,25 +39,12 @@ export async function runLinkedInBot(onStateChange: StateCallback): Promise<void
       ]
     });
 
-    onStateChange({
-      status: 'launching',
-      message: 'Browser launched successfully!',
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.LAUNCHING, BotMessages.BROWSER_LAUNCHED));
 
     // Create a new page
     const page: Page = await browser.newPage();
 
-    // Set user agent to avoid detection
-    await page.setUserAgent(
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
-    );
-
-    onStateChange({
-      status: 'navigating',
-      message: 'Navigating to LinkedIn...',
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.NAVIGATING, BotMessages.NAVIGATING));
 
     // Navigate to LinkedIn
     await page.goto('https://www.linkedin.com', {
@@ -73,38 +55,20 @@ export async function runLinkedInBot(onStateChange: StateCallback): Promise<void
     const pageTitle = await page.title();
     const url = page.url();
 
-    onStateChange({
-      status: 'success',
-      message: 'Successfully opened LinkedIn!',
-      pageTitle,
-      url,
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.SUCCESS, BotMessages.SUCCESS, { pageTitle, url }));
 
     // Keep the browser open for 60 seconds
     await new Promise(resolve => setTimeout(resolve, 60000));
 
-    onStateChange({
-      status: 'closing',
-      message: 'Closing browser...',
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.CLOSING, BotMessages.CLOSING));
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    onStateChange({
-      status: 'error',
-      message: `Error: ${errorMessage}`,
-      timestamp: new Date().toISOString()
-    });
+    onStateChange(createBotState(BotStatus.ERROR, BotMessages.ERROR(errorMessage)));
   } finally {
     if (browser) {
       await browser.close();
-      onStateChange({
-        status: 'idle',
-        message: 'Browser closed',
-        timestamp: new Date().toISOString()
-      });
+      onStateChange(createBotState(BotStatus.IDLE, BotMessages.BROWSER_CLOSED));
     }
     isRunning = false;
   }
