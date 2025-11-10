@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import type { WebSocket } from 'ws';
-import type { LogEntry } from '@/Common/Types/LogEntry';
+import type { LogEntry, LogOptions } from '@/Common/Types/LogEntry';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LOGS_DIR = path.join(__dirname, '../../../Logs');
@@ -83,26 +83,21 @@ export class LoggerService {
     });
   }
 
-  log(
-    level: LogEntry['level'], 
-    message: string, 
-    userMessage?: string, 
-    isAdvanced: boolean = false
-  ): void {
+  log(options: LogOptions): void {
     const entry: LogEntry = {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
-      level,
-      message,
-      userMessage,
-      isAdvanced
+      level: options.level,
+      message: options.message,
+      userMessage: options.userMessage,
+      isAdvanced: options.isAdvanced ?? false
     };
 
     this.logs.push(entry);
 
     // Only write to file if logging is active
     if (this.isLoggingActive && this.logFilePath) {
-      const logLine = `[${new Date(entry.timestamp).toISOString()}] [${level.toUpperCase()}] ${message}\n`;
+      const logLine = `[${new Date(entry.timestamp).toISOString()}] [${options.level.toUpperCase()}] ${options.message}\n`;
       this.writeToFile(logLine);
     }
 

@@ -15,3 +15,10 @@ export interface LogEntry {
   userMessage?: string; // Simplified message for users
   isAdvanced?: boolean; // If true, only show in advanced mode
 }
+
+export interface LogOptions {
+  level: LogLevel;
+  message: string;
+  userMessage?: string;
+  isAdvanced?: boolean;
+}

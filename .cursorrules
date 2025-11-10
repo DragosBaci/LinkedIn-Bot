@@ -1,0 +1,42 @@
+# Project-Specific Coding Guidelines
+
+## Logging
+
+When using the `LoggerService.log()` method, ALWAYS use the object parameter pattern with the `LogOptions` interface:
+
+### ✅ Correct Usage:
+```typescript
+this.logger.log({
+  level: LogLevel.INFO,
+  message: 'Detailed technical message',
+  userMessage: 'User-friendly message', // Optional
+  isAdvanced: true // Optional, defaults to false
+});
+```
+
+### ❌ Incorrect Usage:
+```typescript
+// DO NOT use separate parameters
+this.logger.log(LogLevel.INFO, 'message', 'userMessage', true);
+```
+
+### LogLevel Enum
+
+Always use the `LogLevel` const enum values:
+- `LogLevel.INFO` - For informational messages
+- `LogLevel.SUCCESS` - For successful operations
+- `LogLevel.WARNING` - For warnings
+- `LogLevel.ERROR` - For errors
+
+### Import Statement:
+```typescript
+import { LogLevel } from '@/Common/Types/LogEntry';
+```
+
+## Benefits of Object Parameters:
+1. **Self-documenting**: Each property is explicitly named
+2. **Flexible**: Optional properties can be easily omitted
+3. **IDE-friendly**: Better autocomplete and IntelliSense support
+4. **Maintainable**: Easy to add new properties without breaking existing calls
+5. **Type-safe**: TypeScript ensures correct property names and types
+
