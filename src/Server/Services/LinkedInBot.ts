@@ -1,6 +1,7 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { BotStatus, type BotState, type BotStatusType } from '@/Common/Types/BotStatus';
 import { LoggerService } from '@/Server/Services/LoggerService';
+import { LogLevel } from '@/Common/Types/LogEntry';
 
 export class LinkedInBot {
   private browser: Browser | null = null;
@@ -19,7 +20,7 @@ export class LinkedInBot {
 
   async start(): Promise<void> {
     if (this.state.status === BotStatus.RUNNING) {
-      this.logger.log('warning', 'Bot is already running', 'Bot is already active');
+      this.logger.log(LogLevel.WARNING, 'Bot is already running', 'Bot is already active');
       throw new Error('Bot is already running');
     }
 
@@ -27,10 +28,10 @@ export class LinkedInBot {
     this.logger.startSession();
 
     this.updateState(BotStatus.STARTING, 'Starting browser...');
-    this.logger.log('info', 'Starting bot...', 'Starting bot...');
+    this.logger.log(LogLevel.INFO, 'Starting bot...', 'Starting bot...');
 
     try {
-      this.logger.log('info', 'Launching Puppeteer browser', undefined, true);
+      this.logger.log(LogLevel.INFO, 'Launching Puppeteer browser', undefined, true);
       
       // Launch browser with visible window
       this.browser = await puppeteer.launch({
@@ -42,7 +43,7 @@ export class LinkedInBot {
         ]
       });
 
-      this.logger.log('success', 'Browser launched successfully', 'Browser opened', true);
+      this.logger.log(LogLevel.SUCCESS, 'Browser launched successfully', 'Browser opened', true);
       this.page = await this.browser.newPage();
 
       // Set user agent to avoid detection
@@ -50,24 +51,24 @@ export class LinkedInBot {
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       );
 
-      this.logger.log('info', 'User agent set', undefined, true);
+      this.logger.log(LogLevel.INFO, 'User agent set', undefined, true);
       this.updateState(BotStatus.RUNNING, 'Navigating to LinkedIn...');
-      this.logger.log('info', 'Navigating to LinkedIn...', 'Opening LinkedIn...');
+      this.logger.log(LogLevel.INFO, 'Navigating to LinkedIn...', 'Opening LinkedIn...');
 
       // Navigate to LinkedIn
-      this.logger.log('info', 'Navigating to https://www.linkedin.com', undefined, true);
+      this.logger.log(LogLevel.INFO, 'Navigating to https://www.linkedin.com', undefined, true);
       await this.page.goto('https://www.linkedin.com', {
         waitUntil: 'networkidle2',
         timeout: 30000
       });
 
       this.updateState(BotStatus.RUNNING, 'LinkedIn opened successfully');
-      this.logger.log('success', 'LinkedIn page loaded successfully', 'LinkedIn opened successfully');
+      this.logger.log(LogLevel.SUCCESS, 'LinkedIn page loaded successfully', 'LinkedIn opened successfully');
 
       console.log('LinkedIn opened successfully');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.log('error', `Failed to start bot: ${errorMessage}`, `Failed to start: ${errorMessage}`);
+      this.logger.log(LogLevel.ERROR, `Failed to start bot: ${errorMessage}`, `Failed to start: ${errorMessage}`);
       this.updateState(BotStatus.ERROR, `Error: ${errorMessage}`);
       await this.cleanup();
       throw error;
@@ -76,15 +77,15 @@ export class LinkedInBot {
 
   async stop(): Promise<void> {
     if (this.state.status === BotStatus.IDLE) {
-      this.logger.log('warning', 'Bot is not running', 'Bot is not active');
+      this.logger.log(LogLevel.WARNING, 'Bot is not running', 'Bot is not active');
       throw new Error('Bot is not running');
     }
 
-    this.logger.log('info', 'Stopping bot', 'Stopping bot...');
+    this.logger.log(LogLevel.INFO, 'Stopping bot', 'Stopping bot...');
     this.updateState(BotStatus.STOPPING, 'Stopping bot...');
     await this.cleanup();
     this.updateState(BotStatus.IDLE, 'Bot stopped');
-    this.logger.log('success', 'Bot stopped successfully', 'Bot stopped');
+    this.logger.log(LogLevel.SUCCESS, 'Bot stopped successfully', 'Bot stopped');
     
     // End logging session
     this.logger.endSession();
@@ -95,16 +96,16 @@ export class LinkedInBot {
       if (this.page) {
         await this.page.close();
         this.page = null;
-        this.logger.log('info', 'Browser page closed', undefined, true);
+        this.logger.log(LogLevel.INFO, 'Browser page closed', undefined, true);
       }
       if (this.browser) {
         await this.browser.close();
         this.browser = null;
-        this.logger.log('info', 'Browser closed', 'Browser closed', true);
+        this.logger.log(LogLevel.INFO, 'Browser closed', 'Browser closed', true);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.log('error', `Error during cleanup: ${errorMessage}`, undefined, true);
+      this.logger.log(LogLevel.ERROR, `Error during cleanup: ${errorMessage}`, undefined, true);
       console.error('Error during cleanup:', error);
     }
   }

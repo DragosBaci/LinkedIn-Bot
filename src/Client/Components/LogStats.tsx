@@ -1,5 +1,6 @@
 import React from 'react';
 import type { LogEntry } from '@/Common/Types/LogEntry';
+import { LogLevel } from '@/Common/Types/LogEntry';
 import { Card, CardContent } from '@/Client/Components/Ui/Card';
 import { BarChart3, Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -8,8 +9,8 @@ import { cn } from '@/Client/Lib/Utils';
 interface LogStatsProps {
   logs: LogEntry[];
   showAdvanced: boolean;
-  activeFilter: string | null;
-  onFilterChange: (filter: string | null) => void;
+  activeFilter: LogLevel | null;
+  onFilterChange: (filter: LogLevel | null) => void;
 }
 
 interface StatCardProps {
@@ -17,7 +18,7 @@ interface StatCardProps {
   value: number;
   label: string;
   colorClass: string;
-  filterType: string | null;
+  filterType: LogLevel | null;
   isActive: boolean;
   onClick: () => void;
 }
@@ -64,13 +65,13 @@ export const LogStats: React.FC<LogStatsProps> = ({
 
   const stats = {
     total: filteredLogs.length,
-    info: filteredLogs.filter(log => log.level === 'info').length,
-    success: filteredLogs.filter(log => log.level === 'success').length,
-    warning: filteredLogs.filter(log => log.level === 'warning').length,
-    error: filteredLogs.filter(log => log.level === 'error').length,
+    info: filteredLogs.filter(log => log.level === LogLevel.INFO).length,
+    success: filteredLogs.filter(log => log.level === LogLevel.SUCCESS).length,
+    warning: filteredLogs.filter(log => log.level === LogLevel.WARNING).length,
+    error: filteredLogs.filter(log => log.level === LogLevel.ERROR).length,
   };
 
-  const handleFilterClick = (filter: string | null) => {
+  const handleFilterClick = (filter: LogLevel | null) => {
     // Toggle filter: if clicking the same filter, clear it
     onFilterChange(activeFilter === filter ? null : filter);
   };
@@ -91,36 +92,36 @@ export const LogStats: React.FC<LogStatsProps> = ({
         value={stats.info} 
         label="Info" 
         colorClass="text-blue-500"
-        filterType="info"
-        isActive={activeFilter === 'info'}
-        onClick={() => handleFilterClick('info')}
+        filterType={LogLevel.INFO}
+        isActive={activeFilter === LogLevel.INFO}
+        onClick={() => handleFilterClick(LogLevel.INFO)}
       />
       <StatCard 
         icon={CheckCircle} 
         value={stats.success} 
         label="Success" 
         colorClass="text-green-500"
-        filterType="success"
-        isActive={activeFilter === 'success'}
-        onClick={() => handleFilterClick('success')}
+        filterType={LogLevel.SUCCESS}
+        isActive={activeFilter === LogLevel.SUCCESS}
+        onClick={() => handleFilterClick(LogLevel.SUCCESS)}
       />
       <StatCard 
         icon={AlertTriangle} 
         value={stats.warning} 
         label="Warning" 
         colorClass="text-yellow-500"
-        filterType="warning"
-        isActive={activeFilter === 'warning'}
-        onClick={() => handleFilterClick('warning')}
+        filterType={LogLevel.WARNING}
+        isActive={activeFilter === LogLevel.WARNING}
+        onClick={() => handleFilterClick(LogLevel.WARNING)}
       />
       <StatCard 
         icon={XCircle} 
         value={stats.error} 
         label="Error" 
         colorClass="text-red-500"
-        filterType="error"
-        isActive={activeFilter === 'error'}
-        onClick={() => handleFilterClick('error')}
+        filterType={LogLevel.ERROR}
+        isActive={activeFilter === LogLevel.ERROR}
+        onClick={() => handleFilterClick(LogLevel.ERROR)}
       />
     </div>
   );

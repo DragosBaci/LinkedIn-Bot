@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { LogEntry } from '@/Common/Types/LogEntry';
+import { LogLevel } from '@/Common/Types/LogEntry';
 import { LogStats } from '@/Client/Components/LogStats';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Client/Components/Ui/Card';
 import { Button } from '@/Client/Components/Ui/Button';
@@ -19,13 +20,13 @@ interface LogIconProps {
 const LogIcon: React.FC<LogIconProps> = ({ level }) => {
   const iconClass = "w-4 h-4";
   switch (level) {
-    case 'info':
+    case LogLevel.INFO:
       return <Info className={cn(iconClass, "text-blue-500")} strokeWidth={2} />;
-    case 'success':
+    case LogLevel.SUCCESS:
       return <CheckCircle className={cn(iconClass, "text-green-500")} strokeWidth={2} />;
-    case 'warning':
+    case LogLevel.WARNING:
       return <AlertTriangle className={cn(iconClass, "text-yellow-500")} strokeWidth={2} />;
-    case 'error':
+    case LogLevel.ERROR:
       return <XCircle className={cn(iconClass, "text-red-500")} strokeWidth={2} />;
     default:
       return <Info className={cn(iconClass, "text-gray-500")} strokeWidth={2} />;
@@ -34,13 +35,13 @@ const LogIcon: React.FC<LogIconProps> = ({ level }) => {
 
 const getLogColorClass = (level: LogEntry['level']): string => {
   switch (level) {
-    case 'info':
+    case LogLevel.INFO:
       return 'border-l-blue-500 bg-blue-50/30';
-    case 'success':
+    case LogLevel.SUCCESS:
       return 'border-l-green-500 bg-green-50/30';
-    case 'warning':
+    case LogLevel.WARNING:
       return 'border-l-yellow-500 bg-yellow-50/30';
-    case 'error':
+    case LogLevel.ERROR:
       return 'border-l-red-500 bg-red-50/30';
     default:
       return 'border-l-gray-500 bg-gray-50/30';
@@ -49,9 +50,9 @@ const getLogColorClass = (level: LogEntry['level']): string => {
 
 const getBadgeVariant = (level: LogEntry['level']): "default" | "secondary" | "destructive" | "outline" => {
   switch (level) {
-    case 'error':
+    case LogLevel.ERROR:
       return 'destructive';
-    case 'success':
+    case LogLevel.SUCCESS:
       return 'default';
     default:
       return 'secondary';
@@ -60,7 +61,7 @@ const getBadgeVariant = (level: LogEntry['level']): "default" | "secondary" | "d
 
 export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<LogLevel | null>(null);
 
   const formatTime = (timestamp: number): string => {
     const date = new Date(timestamp);
