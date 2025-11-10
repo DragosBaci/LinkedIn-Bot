@@ -6,6 +6,7 @@ import { WebSocketService } from '@/Client/Services/WebSocketService';
 import type { BotState } from '@/Common/Types/BotStatus';
 import type { LogEntry } from '@/Common/Types/LogEntry';
 import { BotStatus } from '@/Common/Types/BotStatus';
+import { Bot } from 'lucide-react';
 
 const WS_URL = 'ws://localhost:3002';
 
@@ -82,19 +83,23 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-content">
-          <h1 className="app-title">
-            <span className="icon">🤖</span>
-            LinkedIn Bot Controller
-          </h1>
-          <p className="app-subtitle">Automate your LinkedIn workflow with ease</p>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-white/95 backdrop-blur-sm shadow-lg">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center gap-4 mb-3">
+            <Bot className="w-12 h-12 text-primary" />
+            <h1 className="text-4xl font-bold text-gray-900">
+              LinkedIn Bot Controller
+            </h1>
+          </div>
+          <p className="text-center text-lg text-gray-600">
+            Automate your LinkedIn workflow with ease
+          </p>
         </div>
       </header>
 
-      <main className="app-main">
-        <div className="container">
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <BotControl
             botState={botState}
             isLoading={isLoading}
@@ -105,8 +110,10 @@ export const App: React.FC = () => {
         </div>
       </main>
 
-      <footer className="app-footer">
-        <p>Built with React + TypeScript + Puppeteer</p>
+      <footer className="bg-white/95 backdrop-blur-sm border-t border-gray-200 py-6">
+        <p className="text-center text-gray-600">
+          Built with React + TypeScript + Puppeteer
+        </p>
       </footer>
     </div>
   );

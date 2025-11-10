@@ -27,7 +27,7 @@ export class LinkedInBot {
     this.logger.startSession();
 
     this.updateState(BotStatus.STARTING, 'Starting browser...');
-    this.logger.log('info', 'Starting bot...', '🚀 Starting bot...');
+    this.logger.log('info', 'Starting bot...', 'Starting bot...');
 
     try {
       this.logger.log('info', 'Launching Puppeteer browser', undefined, true);
@@ -42,7 +42,7 @@ export class LinkedInBot {
         ]
       });
 
-      this.logger.log('success', 'Browser launched successfully', '✓ Browser opened', true);
+      this.logger.log('success', 'Browser launched successfully', 'Browser opened', true);
       this.page = await this.browser.newPage();
 
       // Set user agent to avoid detection
@@ -52,7 +52,7 @@ export class LinkedInBot {
 
       this.logger.log('info', 'User agent set', undefined, true);
       this.updateState(BotStatus.RUNNING, 'Navigating to LinkedIn...');
-      this.logger.log('info', 'Navigating to LinkedIn...', '🌐 Opening LinkedIn...');
+      this.logger.log('info', 'Navigating to LinkedIn...', 'Opening LinkedIn...');
 
       // Navigate to LinkedIn
       this.logger.log('info', 'Navigating to https://www.linkedin.com', undefined, true);
@@ -62,12 +62,12 @@ export class LinkedInBot {
       });
 
       this.updateState(BotStatus.RUNNING, 'LinkedIn opened successfully');
-      this.logger.log('success', 'LinkedIn page loaded successfully', '✅ LinkedIn opened successfully');
+      this.logger.log('success', 'LinkedIn page loaded successfully', 'LinkedIn opened successfully');
 
-      console.log('✅ LinkedIn opened successfully');
+      console.log('LinkedIn opened successfully');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.log('error', `Failed to start bot: ${errorMessage}`, `❌ Failed to start: ${errorMessage}`);
+      this.logger.log('error', `Failed to start bot: ${errorMessage}`, `Failed to start: ${errorMessage}`);
       this.updateState(BotStatus.ERROR, `Error: ${errorMessage}`);
       await this.cleanup();
       throw error;
@@ -80,11 +80,11 @@ export class LinkedInBot {
       throw new Error('Bot is not running');
     }
 
-    this.logger.log('info', 'Stopping bot', '🛑 Stopping bot...');
+    this.logger.log('info', 'Stopping bot', 'Stopping bot...');
     this.updateState(BotStatus.STOPPING, 'Stopping bot...');
     await this.cleanup();
     this.updateState(BotStatus.IDLE, 'Bot stopped');
-    this.logger.log('success', 'Bot stopped successfully', '✅ Bot stopped');
+    this.logger.log('success', 'Bot stopped successfully', 'Bot stopped');
     
     // End logging session
     this.logger.endSession();
@@ -100,7 +100,7 @@ export class LinkedInBot {
       if (this.browser) {
         await this.browser.close();
         this.browser = null;
-        this.logger.log('info', 'Browser closed', '✓ Browser closed', true);
+        this.logger.log('info', 'Browser closed', 'Browser closed', true);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
