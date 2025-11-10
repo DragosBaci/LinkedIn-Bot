@@ -4,7 +4,7 @@ import { LogStats } from '@/Client/Components/LogStats';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Client/Components/Ui/Card';
 import { Button } from '@/Client/Components/Ui/Button';
 import { Badge } from '@/Client/Components/Ui/Badge';
-import { ScrollText, Trash2, Settings, User, Info, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import { ScrollText, Trash2, Settings, User, Info, CheckCircle, AlertTriangle, XCircle, FilterX } from 'lucide-react';
 import { cn } from '@/Client/Lib/Utils';
 
 interface LogListProps {
@@ -60,6 +60,7 @@ const getBadgeVariant = (level: LogEntry['level']): "default" | "secondary" | "d
 
 export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const formatTime = (timestamp: number): string => {
     const date = new Date(timestamp);
@@ -72,9 +73,14 @@ export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
   };
 
   // Filter logs based on advanced mode
-  const filteredLogs = showAdvanced 
+  let filteredLogs = showAdvanced 
     ? logs 
     : logs.filter(log => !log.isAdvanced);
+
+  // Apply type filter if active
+  if (activeFilter) {
+    filteredLogs = filteredLogs.filter(log => log.level === activeFilter);
+  }
 
   return (
     <Card className="flex flex-col max-h-[800px]">
@@ -83,8 +89,23 @@ export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
           <CardTitle className="flex items-center gap-2 text-xl">
             <ScrollText className="w-5 h-5" />
             Activity Log
+            {activeFilter && (
+              <Badge variant="outline" className="text-xs ml-2">
+                {activeFilter}
+              </Badge>
+            )}
           </CardTitle>
           <div className="flex gap-2">
+            {activeFilter && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setActiveFilter(null)}
+                title="Clear filter"
+              >
+                <FilterX className="h-3.5 w-3.5" />
+              </Button>
+            )}
             <Button
               variant={showAdvanced ? "default" : "outline"}
               size="sm"
@@ -113,11 +134,21 @@ export const LogList: React.FC<LogListProps> = ({ logs, onClear }) => {
           </div>
         </div>
       </CardHeader>
-      <LogStats logs={logs} showAdvanced={showAdvanced} />
+      <LogStats 
+        logs={logs} 
+        showAdvanced={showAdvanced}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      />
       <CardContent className="flex-1 p-0 overflow-y-auto min-h-0">
         {filteredLogs.length === 0 ? (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            <p className="text-sm">No logs yet. Start the bot to see activity.</p>
+          <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+            <p className="text-sm">
+              {activeFilter 
+                ? `No ${activeFilter} logs found. Click a stat card to change filter.`
+                : 'No logs yet. Start the bot to see activity.'
+              }
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
