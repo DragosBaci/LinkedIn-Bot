@@ -74,8 +74,8 @@ body {
 }
 
 /* Card Base Styles */
-.status-display,
-.bot-control {
+.bot-control,
+.log-list {
   background: white;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -83,83 +83,31 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.status-display:hover,
-.bot-control:hover {
+.bot-control:hover,
+.log-list:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
-.status-header,
-.control-header {
+.control-header,
+.log-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.status-header h2,
-.control-header h2 {
+.control-header h2,
+.log-header h2 {
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-.status-content,
-.control-content {
+.control-content,
+.log-content {
   padding: 2rem;
-}
-
-/* Status Display Specific */
-.status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-}
-
-.status-icon {
-  font-size: 2rem;
-}
-
-.status-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.status-message {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.status-message p {
-  color: #495057;
-  line-height: 1.6;
-}
-
-.status-timestamp {
-  text-align: right;
-  color: #6c757d;
-}
-
-/* Status Colors */
-.status-idle {
-  border-left: 4px solid #6c757d;
-}
-
-.status-transitioning {
-  border-left: 4px solid #ffc107;
-}
-
-.status-running {
-  border-left: 4px solid #28a745;
-}
-
-.status-error {
-  border-left: 4px solid #dc3545;
 }
 
 /* Control Buttons */
@@ -207,6 +155,22 @@ body {
 .btn-stop {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: white;
+}
+
+.btn-clear {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-clear:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .btn-icon {
@@ -258,6 +222,97 @@ body {
   line-height: 1.6;
 }
 
+/* Log List Styles */
+.log-content {
+  padding: 0;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.log-entries {
+  display: flex;
+  flex-direction: column;
+}
+
+.log-entry {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.log-entry:hover {
+  background-color: #f8f9fa;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-icon {
+  font-size: 1.2rem;
+}
+
+.log-time {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.log-message {
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+/* Log Level Colors */
+.log-info {
+  border-left: 4px solid #17a2b8;
+}
+
+.log-success {
+  border-left: 4px solid #28a745;
+}
+
+.log-warning {
+  border-left: 4px solid #ffc107;
+}
+
+.log-error {
+  border-left: 4px solid #dc3545;
+}
+
+.log-empty {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.log-empty p {
+  font-size: 1.1rem;
+}
+
+/* Scrollbar Styling */
+.log-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log-content::-webkit-scrollbar-track {
+  background: #f1f3f5;
+}
+
+.log-content::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 4px;
+}
+
+.log-content::-webkit-scrollbar-thumb:hover {
+  background: #868e96;
+}
+
 /* Footer */
 .app-footer {
   background: rgba(255, 255, 255, 0.95);
@@ -282,9 +337,23 @@ body {
     flex-direction: column;
   }
 
-  .status-display,
-  .bot-control {
+  .bot-control,
+  .log-list {
     margin-bottom: 1rem;
   }
-}
 
+  .log-entry {
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+  }
+
+  .log-time {
+    grid-column: 2;
+    font-size: 0.75rem;
+  }
+
+  .log-message {
+    grid-column: 1 / -1;
+    font-size: 0.9rem;
+  }
+}

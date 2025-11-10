@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BotControl } from '@/Client/Components/BotControl';
-import { BotStatusDisplay } from '@/Client/Components/BotStatusDisplay';
+import { LogList } from '@/Client/Components/LogList';
 import { BotService } from '@/Client/Services/BotService';
 import type { BotState } from '@/Common/Types/BotStatus';
+import type { LogEntry } from '@/Common/Types/LogEntry';
 import { BotStatus } from '@/Common/Types/BotStatus';
 
 export const App: React.FC = () => {
@@ -11,16 +12,21 @@ export const App: React.FC = () => {
     message: 'Bot is idle',
     timestamp: Date.now()
   });
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Poll for status updates
+    // Poll for status and logs updates
     const interval = setInterval(async () => {
       try {
-        const status = await BotService.getStatus();
+        const [status, fetchedLogs] = await Promise.all([
+          BotService.getStatus(),
+          BotService.getLogs()
+        ]);
         setBotState(status);
+        setLogs(fetchedLogs);
       } catch (error) {
-        console.error('Failed to fetch bot status:', error);
+        console.error('Failed to fetch updates:', error);
       }
     }, 1000);
 
@@ -53,6 +59,16 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleClearLogs = async () => {
+    try {
+      await BotService.clearLogs();
+      setLogs([]);
+    } catch (error) {
+      console.error('Failed to clear logs:', error);
+      alert('Failed to clear logs. Check console for details.');
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -67,13 +83,13 @@ export const App: React.FC = () => {
 
       <main className="app-main">
         <div className="container">
-          <BotStatusDisplay botState={botState} />
           <BotControl
             botState={botState}
             isLoading={isLoading}
             onStart={handleStart}
             onStop={handleStop}
           />
+          <LogList logs={logs} onClear={handleClearLogs} />
         </div>
       </main>
 
@@ -83,4 +99,3 @@ export const App: React.FC = () => {
     </div>
   );
 };
-

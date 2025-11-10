@@ -1,5 +1,6 @@
 import type { ApiResponse } from '@/Common/Types/ApiResponse';
 import type { BotState } from '@/Common/Types/BotStatus';
+import type { LogEntry } from '@/Common/Types/LogEntry';
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
@@ -48,5 +49,27 @@ export class BotService {
 
     return result.data!;
   }
-}
 
+  static async getLogs(): Promise<LogEntry[]> {
+    const response = await fetch(`${API_BASE_URL}/logs`);
+    const result = await response.json() as ApiResponse<LogEntry[]>;
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to get logs');
+    }
+
+    return result.data!;
+  }
+
+  static async clearLogs(): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/logs/clear`, {
+      method: 'POST'
+    });
+
+    const result = await response.json() as ApiResponse;
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to clear logs');
+    }
+  }
+}
