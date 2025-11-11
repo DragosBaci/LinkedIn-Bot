@@ -19,6 +19,7 @@ export type { BotContext } from '@/Server/Services/LinkedInBot/Types/BotContext'
 // Command exports
 export type { ICommand } from '@/Server/Services/LinkedInBot/Commands/ICommand';
 export { StartCommand } from '@/Server/Services/LinkedInBot/Commands/StartCommand';
+export { ClickGmailLoginCommand } from '@/Server/Services/LinkedInBot/Commands/ClickGmailLoginCommand';
 
 // Utils exports
 export { ErrorHandler } from '@/Server/Services/LinkedInBot/Utils/ErrorHandler';

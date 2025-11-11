@@ -7,7 +7,8 @@ import { BrowserManager } from '@/Server/Services/LinkedInBot/Services/BrowserMa
 import { NavigationService } from '@/Server/Services/LinkedInBot/Services/NavigationService';
 import { StateManager } from '@/Server/Services/LinkedInBot/Services/StateManager';
 import type { BotContext } from '@/Server/Services/LinkedInBot/Types/BotContext';
-import type { ICommand } from './ICommand';
+import type { ICommand } from '@/Server/Services/LinkedInBot/Commands/ICommand';
+import { ClickGmailLoginCommand } from '@/Server/Services/LinkedInBot/Commands/ClickGmailLoginCommand';
 
 export class StartCommand implements ICommand {
   private logger: LoggerService;
@@ -71,6 +72,10 @@ export class StartCommand implements ICommand {
       level: LogLevel.SUCCESS,
       ...BotMessages.LINKEDIN_LOADED
     });
+
+    // Click the Gmail login button
+    const clickGmailCommand = new ClickGmailLoginCommand(this.logger);
+    await clickGmailCommand.execute(context);
   }
 }
 

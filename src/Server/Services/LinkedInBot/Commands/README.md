@@ -26,9 +26,9 @@ To add a new LinkedIn action:
 ### Example: SendMessageCommand
 
 ```typescript
-import type { ICommand } from './ICommand';
-import type { BotContext } from '../Types/BotContext';
-import { NavigationService } from '../Services/NavigationService';
+import type { ICommand } from '@/Server/Services/LinkedInBot/Commands/ICommand';
+import type { BotContext } from '@/Server/Services/LinkedInBot/Types/BotContext';
+import { NavigationService } from '@/Server/Services/LinkedInBot/Services/NavigationService';
 import { LoggerService } from '@/Server/Services/LoggerService';
 
 export class SendMessageCommand implements ICommand {

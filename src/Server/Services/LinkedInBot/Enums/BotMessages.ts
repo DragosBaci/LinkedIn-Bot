@@ -34,6 +34,26 @@ export const BotMessages = {
     message: 'LinkedIn page loaded successfully',
     userMessage: 'LinkedIn opened successfully'
   },
+  LOOKING_FOR_GMAIL_BUTTON: {
+    message: 'Looking for Gmail login button',
+    userMessage: 'Searching for Gmail login option...'
+  },
+  GMAIL_BUTTON_FOUND: {
+    message: 'Gmail login button found',
+    userMessage: 'Gmail login option found'
+  },
+  GMAIL_BUTTON_CLICKED: {
+    message: 'Gmail login button clicked',
+    userMessage: 'Proceeding with Gmail login...'
+  },
+  GMAIL_LOGIN_PAGE_LOADED: {
+    message: 'Gmail login page loaded',
+    userMessage: 'Gmail login page ready'
+  },
+  GMAIL_BUTTON_NOT_FOUND: {
+    message: 'Gmail login button not found on page',
+    userMessage: 'Could not find Gmail login option'
+  },
   NOT_RUNNING: {
     message: 'Bot is not running',
     userMessage: 'Bot is not active'
