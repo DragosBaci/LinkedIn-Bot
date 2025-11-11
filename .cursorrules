@@ -1,5 +1,84 @@
 # Project-Specific Coding Guidelines
 
+## General: Always Use Absolute Imports
+
+ALWAYS use absolute imports with the `@/` alias instead of relative imports:
+
+### ✅ Correct Usage:
+```typescript
+import { Component } from '@/Client/Components/Component';
+import { Service } from '@/Server/Services/Service';
+import { LogLevel } from '@/Common/Types/LogEntry';
+```
+
+### ❌ Incorrect Usage:
+```typescript
+// DO NOT use relative imports
+import { Component } from '../Components/Component';
+import { Service } from './Service';
+import { LogLevel } from '../../Common/Types/LogEntry';
+```
+
+### Benefits:
+1. **No path confusion** - Always clear where files are located
+2. **Easier refactoring** - Moving files doesn't break imports
+3. **Better readability** - Clear project structure at a glance
+4. **IDE-friendly** - Better autocomplete and navigation
+5. **Consistent** - All imports follow the same pattern
+
+## General: Use Object Parameters for Functions with Multiple Fields
+
+When a function has **3 or more parameters**, especially when some are optional, ALWAYS use an object parameter pattern with a TypeScript interface:
+
+### ✅ Correct Usage:
+```typescript
+interface CreateUserOptions {
+  name: string;
+  email: string;
+  age?: number;
+  isActive?: boolean;
+}
+
+function createUser(options: CreateUserOptions) {
+  // Implementation
+}
+
+// Usage
+createUser({
+  name: 'John Doe',
+  email: 'john@example.com',
+  isActive: true
+});
+```
+
+### ❌ Incorrect Usage:
+```typescript
+// DO NOT use multiple separate parameters
+function createUser(name: string, email: string, age?: number, isActive?: boolean) {
+  // Implementation
+}
+
+// Harder to read and maintain
+createUser('John Doe', 'john@example.com', undefined, true);
+```
+
+### Benefits of Object Parameters:
+1. **Self-documenting**: Each property is explicitly named
+2. **Flexible**: Optional properties can be easily omitted
+3. **Order-independent**: No need to remember parameter order
+4. **IDE-friendly**: Better autocomplete and IntelliSense support
+5. **Maintainable**: Easy to add new properties without breaking existing calls
+6. **Type-safe**: TypeScript ensures correct property names and types
+7. **Readable**: Clear what each value represents at call site
+
+### When to Apply This Pattern:
+- ✅ Functions with 3+ parameters
+- ✅ Functions with multiple optional parameters
+- ✅ Functions where parameter order is not obvious
+- ✅ Configuration or options-style parameters
+- ❌ Simple functions with 1-2 obvious parameters (e.g., `add(a, b)`)
+- ❌ Common patterns where order is conventional (e.g., `map(item, index)`)
+
 ## Logging
 
 When using the `LoggerService.log()` method, ALWAYS use the object parameter pattern with the `LogOptions` interface:
@@ -32,11 +111,4 @@ Always use the `LogLevel` const enum values:
 ```typescript
 import { LogLevel } from '@/Common/Types/LogEntry';
 ```
-
-## Benefits of Object Parameters:
-1. **Self-documenting**: Each property is explicitly named
-2. **Flexible**: Optional properties can be easily omitted
-3. **IDE-friendly**: Better autocomplete and IntelliSense support
-4. **Maintainable**: Easy to add new properties without breaking existing calls
-5. **Type-safe**: TypeScript ensures correct property names and types
 

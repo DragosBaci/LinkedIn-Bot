@@ -2,6 +2,7 @@ import puppeteer, { Browser, Page } from 'puppeteer';
 import { BotStatus, type BotState, type BotStatusType } from '@/Common/Types/BotStatus';
 import { LoggerService } from '@/Server/Services/LoggerService';
 import { LogLevel } from '@/Common/Types/LogEntry';
+import { BotMessages } from '@/Server/Services/LinkedInBot/Enums/BotMessages';
 
 export class LinkedInBot {
   private browser: Browser | null = null;
@@ -12,7 +13,7 @@ export class LinkedInBot {
   constructor() {
     this.state = {
       status: BotStatus.IDLE,
-      message: 'Bot is idle',
+      message: BotMessages.IDLE.message,
       timestamp: Date.now()
     };
     this.logger = LoggerService.getInstance();
@@ -22,26 +23,24 @@ export class LinkedInBot {
     if (this.state.status === BotStatus.RUNNING) {
       this.logger.log({
         level: LogLevel.WARNING,
-        message: 'Bot is already running',
-        userMessage: 'Bot is already active'
+        ...BotMessages.ALREADY_RUNNING
       });
-      throw new Error('Bot is already running');
+      throw new Error(BotMessages.ALREADY_RUNNING.message);
     }
 
     // Start logging session - this creates the log file
     this.logger.startSession();
 
-    this.updateState(BotStatus.STARTING, 'Starting browser...');
+    this.updateState(BotStatus.STARTING, BotMessages.STARTING.message);
     this.logger.log({
       level: LogLevel.INFO,
-      message: 'Starting bot...',
-      userMessage: 'Starting bot...'
+      ...BotMessages.STARTING
     });
 
     try {
       this.logger.log({
         level: LogLevel.INFO,
-        message: 'Launching Puppeteer browser',
+        ...BotMessages.LAUNCHING_BROWSER,
         isAdvanced: true
       });
       
@@ -57,8 +56,7 @@ export class LinkedInBot {
 
       this.logger.log({
         level: LogLevel.SUCCESS,
-        message: 'Browser launched successfully',
-        userMessage: 'Browser opened',
+        ...BotMessages.BROWSER_LAUNCHED,
         isAdvanced: true
       });
       this.page = await this.browser.newPage();
@@ -70,20 +68,19 @@ export class LinkedInBot {
 
       this.logger.log({
         level: LogLevel.INFO,
-        message: 'User agent set',
+        ...BotMessages.USER_AGENT_SET,
         isAdvanced: true
       });
-      this.updateState(BotStatus.RUNNING, 'Navigating to LinkedIn...');
+      this.updateState(BotStatus.RUNNING, BotMessages.NAVIGATING_LINKEDIN.message);
       this.logger.log({
         level: LogLevel.INFO,
-        message: 'Navigating to LinkedIn...',
-        userMessage: 'Opening LinkedIn...'
+        ...BotMessages.NAVIGATING_LINKEDIN
       });
 
       // Navigate to LinkedIn
       this.logger.log({
         level: LogLevel.INFO,
-        message: 'Navigating to https://www.linkedin.com',
+        ...BotMessages.NAVIGATING_URL,
         isAdvanced: true
       });
       await this.page.goto('https://www.linkedin.com', {
@@ -91,20 +88,17 @@ export class LinkedInBot {
         timeout: 30000
       });
 
-      this.updateState(BotStatus.RUNNING, 'LinkedIn opened successfully');
+      this.updateState(BotStatus.RUNNING, BotMessages.LINKEDIN_LOADED.message);
       this.logger.log({
         level: LogLevel.SUCCESS,
-        message: 'LinkedIn page loaded successfully',
-        userMessage: 'LinkedIn opened successfully'
+        ...BotMessages.LINKEDIN_LOADED
       });
 
-      console.log('LinkedIn opened successfully');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : BotMessages.UNKNOWN_ERROR.message;
       this.logger.log({
         level: LogLevel.ERROR,
-        message: `Failed to start bot: ${errorMessage}`,
-        userMessage: `Failed to start: ${errorMessage}`
+        ...BotMessages.START_ERROR(errorMessage)
       });
       this.updateState(BotStatus.ERROR, `Error: ${errorMessage}`);
       await this.cleanup();
@@ -116,24 +110,21 @@ export class LinkedInBot {
     if (this.state.status === BotStatus.IDLE) {
       this.logger.log({
         level: LogLevel.WARNING,
-        message: 'Bot is not running',
-        userMessage: 'Bot is not active'
+        ...BotMessages.NOT_RUNNING
       });
-      throw new Error('Bot is not running');
+      throw new Error(BotMessages.NOT_RUNNING.message);
     }
 
     this.logger.log({
       level: LogLevel.INFO,
-      message: 'Stopping bot',
-      userMessage: 'Stopping bot...'
+      ...BotMessages.STOPPING
     });
-    this.updateState(BotStatus.STOPPING, 'Stopping bot...');
+    this.updateState(BotStatus.STOPPING, BotMessages.STOPPING.message);
     await this.cleanup();
-    this.updateState(BotStatus.IDLE, 'Bot stopped');
+    this.updateState(BotStatus.IDLE, BotMessages.STOPPED.message);
     this.logger.log({
       level: LogLevel.SUCCESS,
-      message: 'Bot stopped successfully',
-      userMessage: 'Bot stopped'
+      ...BotMessages.STOPPED
     });
     
     // End logging session
@@ -147,7 +138,7 @@ export class LinkedInBot {
         this.page = null;
         this.logger.log({
           level: LogLevel.INFO,
-          message: 'Browser page closed',
+          ...BotMessages.PAGE_CLOSED,
           isAdvanced: true
         });
       }
@@ -156,19 +147,17 @@ export class LinkedInBot {
         this.browser = null;
         this.logger.log({
           level: LogLevel.INFO,
-          message: 'Browser closed',
-          userMessage: 'Browser closed',
+          ...BotMessages.BROWSER_CLOSED,
           isAdvanced: true
         });
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : BotMessages.UNKNOWN_ERROR.message;
       this.logger.log({
         level: LogLevel.ERROR,
-        message: `Error during cleanup: ${errorMessage}`,
+        ...BotMessages.CLEANUP_ERROR(errorMessage),
         isAdvanced: true
       });
-      console.error('Error during cleanup:', error);
     }
   }
 
@@ -178,10 +167,14 @@ export class LinkedInBot {
       message,
       timestamp: Date.now()
     };
-    console.log(`[Bot Status] ${status}: ${message}`);
+    this.logger.log({
+      level: LogLevel.INFO,
+      ...BotMessages.BOT_STATUS(status, message)
+    });
   }
 
   getState(): BotState {
     return { ...this.state };
   }
 }
+
