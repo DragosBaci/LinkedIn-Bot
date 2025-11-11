@@ -28,8 +28,7 @@ export class NavigationService {
 
     this.logger.log({
       level: LogLevel.INFO,
-      message: `Navigating to ${url}`,
-      userMessage,
+      ...BotMessages.NAVIGATING_TO_URL(url, userMessage),
       isAdvanced: true
     });
 
@@ -40,8 +39,7 @@ export class NavigationService {
 
     this.logger.log({
       level: LogLevel.SUCCESS,
-      message: `Successfully navigated to ${url}`,
-      userMessage: userMessage ? `${userMessage} - Complete` : undefined,
+      ...BotMessages.NAVIGATION_SUCCESS(url, userMessage),
       isAdvanced: true
     });
   }
@@ -51,7 +49,7 @@ export class NavigationService {
     
     this.logger.log({
       level: LogLevel.INFO,
-      message: `Element found: ${selector}`,
+      ...BotMessages.ELEMENT_FOUND(selector),
       isAdvanced: true
     });
   }

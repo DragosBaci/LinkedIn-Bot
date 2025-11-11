@@ -33,8 +33,7 @@ export class ClickGmailLoginCommand implements ICommand {
       // First, try to find the iframe containing the Google Sign-In button
       this.logger.log({
         level: LogLevel.INFO,
-        message: 'Looking for Google Sign-In iframe',
-        userMessage: 'Searching for login options...',
+        ...BotMessages.LOOKING_FOR_IFRAME,
         isAdvanced: true
       });
 
@@ -46,7 +45,7 @@ export class ClickGmailLoginCommand implements ICommand {
       
       this.logger.log({
         level: LogLevel.INFO,
-        message: `Found ${frames.length} frames on the page`,
+        ...BotMessages.FOUND_FRAMES(frames.length),
         isAdvanced: true
       });
 
@@ -57,7 +56,7 @@ export class ClickGmailLoginCommand implements ICommand {
         const frameUrl = frame.url();
         this.logger.log({
           level: LogLevel.INFO,
-          message: `Checking frame: ${frameUrl}`,
+          ...BotMessages.CHECKING_FRAME(frameUrl),
           isAdvanced: true
         });
 
@@ -66,8 +65,7 @@ export class ClickGmailLoginCommand implements ICommand {
           googleFrame = frame;
           this.logger.log({
             level: LogLevel.SUCCESS,
-            message: 'Found Google Sign-In iframe',
-            userMessage: 'Found Google login',
+            ...BotMessages.FOUND_GOOGLE_IFRAME,
             isAdvanced: true
           });
           break;
@@ -78,7 +76,7 @@ export class ClickGmailLoginCommand implements ICommand {
       if (googleFrame) {
         this.logger.log({
           level: LogLevel.INFO,
-          message: 'Looking for button inside iframe',
+          ...BotMessages.LOOKING_FOR_BUTTON_IN_IFRAME,
           isAdvanced: true
         });
 
@@ -96,8 +94,7 @@ export class ClickGmailLoginCommand implements ICommand {
         // Fallback: try to find regular button on the page (not in iframe)
         this.logger.log({
           level: LogLevel.INFO,
-          message: 'Google iframe not found, trying regular selectors',
-          userMessage: 'Trying alternative login method...',
+          ...BotMessages.IFRAME_NOT_FOUND_FALLBACK,
           isAdvanced: true
         });
 
@@ -135,8 +132,7 @@ export class ClickGmailLoginCommand implements ICommand {
 
         this.logger.log({
           level: LogLevel.INFO,
-          message: `Gmail button found with selector: ${usedSelector}`,
-          userMessage: 'Gmail button found',
+          ...BotMessages.GMAIL_BUTTON_FOUND_WITH_SELECTOR(usedSelector),
           isAdvanced: true
         });
 
@@ -163,23 +159,21 @@ export class ClickGmailLoginCommand implements ICommand {
         // Log that we're waiting for user to select account
         this.logger.log({
           level: LogLevel.INFO,
-          message: 'Waiting for user to manually select Google account',
-          userMessage: 'Please select your Google account in the browser'
+          ...BotMessages.WAITING_FOR_USER_ACCOUNT_SELECTION
         });
       } catch {
         // Navigation might not complete if popup opens
         this.logger.log({
           level: LogLevel.INFO,
-          message: 'Google login popup opened, waiting for user action',
-          userMessage: 'Please select your Google account in the popup'
+          ...BotMessages.GOOGLE_POPUP_WAITING_FOR_USER
         });
       }
 
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : BotMessages.UNKNOWN_ERROR.message;
       this.logger.log({
         level: LogLevel.ERROR,
-        message: `Failed to click Gmail button: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        userMessage: 'Failed to proceed with Gmail login'
+        ...BotMessages.GMAIL_CLICK_FAILED(errorMessage)
       });
       throw error;
     }

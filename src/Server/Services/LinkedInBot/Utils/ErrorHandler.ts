@@ -21,8 +21,7 @@ export class ErrorHandler {
     
     this.logger.log({
       level: LogLevel.ERROR,
-      message: `${context}: ${errorMessage}`,
-      userMessage: context,
+      ...BotMessages.ERROR_WITH_CONTEXT(context, errorMessage),
       isAdvanced
     });
   }
