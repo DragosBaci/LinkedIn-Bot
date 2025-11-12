@@ -22,6 +22,8 @@ export enum LogEventType {
   GMAIL_BUTTON_CLICKED = 'GMAIL_BUTTON_CLICKED',
   GMAIL_BUTTON_NOT_FOUND = 'GMAIL_BUTTON_NOT_FOUND',
   WAITING_FOR_USER_ACCOUNT_SELECTION = 'WAITING_FOR_USER_ACCOUNT_SELECTION',
+  WAITING_FOR_SIGN_IN_COMPLETE = 'WAITING_FOR_SIGN_IN_COMPLETE',
+  SIGN_IN_COMPLETE = 'SIGN_IN_COMPLETE',
   
   // Errors
   START_ERROR = 'START_ERROR',
@@ -98,6 +100,10 @@ export class LogObserver {
         return { level: LogLevel.WARNING, ...BotMessages.GMAIL_BUTTON_NOT_FOUND };
       case LogEventType.WAITING_FOR_USER_ACCOUNT_SELECTION:
         return { level: LogLevel.INFO, ...BotMessages.WAITING_FOR_USER_ACCOUNT_SELECTION };
+      case LogEventType.WAITING_FOR_SIGN_IN_COMPLETE:
+        return { level: LogLevel.INFO, ...BotMessages.WAITING_FOR_SIGN_IN_COMPLETE };
+      case LogEventType.SIGN_IN_COMPLETE:
+        return { level: LogLevel.SUCCESS, ...BotMessages.SIGN_IN_COMPLETE };
 
       // Errors
       case LogEventType.START_ERROR:

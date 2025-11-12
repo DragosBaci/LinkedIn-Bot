@@ -83,6 +83,14 @@ export const BotMessages = {
     message: 'Waiting for user to manually select Google account',
     userMessage: 'Please select your Google account in the browser'
   },
+  WAITING_FOR_SIGN_IN_COMPLETE: {
+    message: 'Waiting for Google sign-in to complete',
+    userMessage: 'Please complete the Google sign-in process. Browser will stay open.'
+  },
+  SIGN_IN_COMPLETE: {
+    message: 'Google sign-in completed successfully',
+    userMessage: 'Successfully signed in to LinkedIn!'
+  },
   GOOGLE_POPUP_WAITING_FOR_USER: {
     message: 'Google login popup opened, waiting for user action',
     userMessage: 'Please select your Google account in the popup'
