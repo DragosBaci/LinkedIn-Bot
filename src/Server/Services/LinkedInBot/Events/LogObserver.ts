@@ -25,6 +25,12 @@ export enum LogEventType {
   WAITING_FOR_SIGN_IN_COMPLETE = 'WAITING_FOR_SIGN_IN_COMPLETE',
   SIGN_IN_COMPLETE = 'SIGN_IN_COMPLETE',
   
+  // Feed scrolling
+  SCROLLING_FEED = 'SCROLLING_FEED',
+  REACHED_BOTTOM = 'REACHED_BOTTOM',
+  CLICKING_SEE_NEW_POSTS = 'CLICKING_SEE_NEW_POSTS',
+  SEE_NEW_POSTS_CLICKED = 'SEE_NEW_POSTS_CLICKED',
+  
   // Errors
   START_ERROR = 'START_ERROR',
   GMAIL_CLICK_FAILED = 'GMAIL_CLICK_FAILED'
@@ -104,6 +110,16 @@ export class LogObserver {
         return { level: LogLevel.INFO, ...BotMessages.WAITING_FOR_SIGN_IN_COMPLETE };
       case LogEventType.SIGN_IN_COMPLETE:
         return { level: LogLevel.SUCCESS, ...BotMessages.SIGN_IN_COMPLETE };
+
+      // Feed scrolling
+      case LogEventType.SCROLLING_FEED:
+        return { level: LogLevel.INFO, ...BotMessages.SCROLLING_FEED };
+      case LogEventType.REACHED_BOTTOM:
+        return { level: LogLevel.INFO, ...BotMessages.REACHED_BOTTOM };
+      case LogEventType.CLICKING_SEE_NEW_POSTS:
+        return { level: LogLevel.INFO, ...BotMessages.CLICKING_SEE_NEW_POSTS };
+      case LogEventType.SEE_NEW_POSTS_CLICKED:
+        return { level: LogLevel.SUCCESS, ...BotMessages.SEE_NEW_POSTS_CLICKED };
 
       // Errors
       case LogEventType.START_ERROR:

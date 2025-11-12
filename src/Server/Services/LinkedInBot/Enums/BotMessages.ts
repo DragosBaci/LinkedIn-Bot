@@ -91,6 +91,22 @@ export const BotMessages = {
     message: 'Google sign-in completed successfully',
     userMessage: 'Successfully signed in to LinkedIn!'
   },
+  SCROLLING_FEED: {
+    message: 'Scrolling LinkedIn feed',
+    userMessage: 'Browsing feed...'
+  },
+  REACHED_BOTTOM: {
+    message: 'Reached bottom of feed',
+    userMessage: 'Reached end of feed'
+  },
+  CLICKING_SEE_NEW_POSTS: {
+    message: 'Clicking "See new posts" button',
+    userMessage: 'Loading new posts...'
+  },
+  SEE_NEW_POSTS_CLICKED: {
+    message: 'Successfully clicked "See new posts"',
+    userMessage: 'New posts loaded'
+  },
   GOOGLE_POPUP_WAITING_FOR_USER: {
     message: 'Google login popup opened, waiting for user action',
     userMessage: 'Please select your Google account in the popup'
